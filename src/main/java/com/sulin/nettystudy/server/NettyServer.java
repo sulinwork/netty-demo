@@ -7,6 +7,8 @@ import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
 public class NettyServer {
 
@@ -39,6 +41,8 @@ public class NettyServer {
                 .childHandler(new ChannelInitializer<SocketChannel>() {
                     protected void initChannel(SocketChannel socketChannel) throws Exception {
                         ChannelPipeline pipeline = socketChannel.pipeline();
+                        pipeline.addLast("encoder", new StringEncoder());
+                        pipeline.addLast("decoder", new StringDecoder());
                         pipeline.addLast(new NettyServerHandler());
                     }
                 });
