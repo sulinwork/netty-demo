@@ -41,23 +41,30 @@ public class NettyClient {
         System.out.println("..... client is ready ......");
         channelFuture = bootstrap.connect("localhost", 9999).sync();
 
-        channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
-            public void operationComplete(Future<? super Void> future) throws Exception {
-                if (channelFuture.isSuccess()) {
-                    System.out.println("连接成功");
-                    new Thread(()->{
-                        Scanner scanner = new Scanner(System.in);
-                        while (true) {
-                            String line = scanner.nextLine();
-                            channelFuture.channel().writeAndFlush(line);
-                        }
-                    }).start();
+        Channel channel = channelFuture.channel();
+        Scanner scanner = new Scanner(System.in);
+        while (scanner.hasNextLine()) {
+            String line = scanner.nextLine();
+            channel.writeAndFlush(line);
+        }
 
-                } else {
-                    System.out.println("连接失败");
-                }
-            }
-        });
+//        channelFuture.addListener(new GenericFutureListener<Future<? super Void>>() {
+//            public void operationComplete(Future<? super Void> future) throws Exception {
+//                if (channelFuture.isSuccess()) {
+//                    System.out.println("连接成功");
+//                    new Thread(()->{
+//                        Scanner scanner = new Scanner(System.in);
+//                        while (true) {
+//                            String line = scanner.nextLine();
+//                            channelFuture.channel().writeAndFlush(line);
+//                        }
+//                    }).start();
+//
+//                } else {
+//                    System.out.println("连接失败");
+//                }
+//            }
+//        });
 
         ChannelFuture closeSync = channelFuture.channel().closeFuture().sync();
     }
